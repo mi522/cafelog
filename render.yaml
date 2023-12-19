@@ -1,0 +1,22 @@
+databases:
+  - name: cafelog_DB
+    databaseName: cafelog_db
+    user: cafelog
+    region: singapore
+
+services:
+  - type: web
+    name: cafelog
+    env: ruby
+    region: singapore
+    plan: free
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cafelog_DB
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+
