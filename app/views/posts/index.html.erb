@@ -1,0 +1,71 @@
+<section id="first-block">
+  <div class="title">
+    Cafelog
+    <%= form_tag({controller:"posts",action:"index"}, method: :get) do %>
+
+      <div class="w" >
+        <%= text_field_tag :search %>
+        <%= submit_tag '検索'  %>
+        <input type="text" placeholder="検索">
+      </div>
+
+    <% end %>  
+  </div>  
+  <%= image_tag 'photo-1495474472287-4d71bcdd2085.avif', class:'coffee' %>
+</section>
+
+<section id="second-block">
+  <%= image_tag '1515831170-3.png', class:'computer' %>
+  <div class="concept"> 
+   <p class=concept-show>Concept</p>
+
+  </div>
+</section>
+
+
+<section id="third-block">
+  <h3>新着投稿</h3>
+  <%= link_to "新規投稿へ", new_post_path %>
+  <%= page_entries_info @posts %>
+  <%= paginate @posts %>
+  <div class="posts-container">
+    <% @posts.each do |t| %>
+      <div class="post">
+      <%= image_tag t.image_url, size: "250x200" if t.image? %>
+        <%= t.name %>
+        <%= t.station %>
+        <%= t.battery %>
+        <%= t.wifi %>
+        <%= t.people %>
+        <% if user_signed_in? %>
+          <% if current_user.already_liked?(t) %>
+              <%= link_to post_like_path(id: t.id,  post_id: t.id), method: :delete do %>
+                  <p>いいねを取り消す</p><%= t.likes.count %>
+              <% end %>
+          <% else %>
+              <%= link_to post_likes_path(id: t.id, post_id: t.id), method: :post do %>
+                  <p>いいね</p><%= t.likes.count %>
+              <% end %>
+          <% end %>
+        <% else %>
+            <p>いいねの数 = </p><%= t.likes.count %>
+        <% end %>
+        <%= t.created_at %>
+        
+          <div>
+            <h2>総合評価：
+              <span class="star-rating">
+                <span class="star-rating-front" style="width: <%= getPercent(t.overall) %>%;">★★★★★</span>
+                <span class="star-rating-back">★★★★★</span>
+              </span> 
+            </h2>
+          </div>
+
+        <%= link_to "詳細へ", post_path(t.id) %> 
+        <%= link_to "編集する", edit_post_path(t.id) %>
+        <%= button_to "削除する", post_path(t.id), method: :delete %>
+   <% end %>
+  </div>
+
+  </div>
+</section>

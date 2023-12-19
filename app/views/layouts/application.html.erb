@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cafelog</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+ <header>
+
+    <div class="hamburger-menu">
+      <label for="menu-btn-check" class="menu-btn"><span></span></label>
+      <input type="checkbox" id="menu-btn-check">
+      <div class="menu-content">
+        <div class="login">
+          <% if user_signed_in? %>
+            <%= button_to '  ログアウト  ', destroy_user_session_path, method: :delete %>
+          <% else %>
+            <%= link_to "  新規登録  ", new_user_registration_path %>
+            <%= link_to "ログイン  ", new_user_session_path %>
+          <% end %>
+        </div>
+        <ul>
+            <li>
+                <a href="#">新着カフェ</a>
+            </li>
+            <li>
+                <a href="#">マイページ</a>
+            </li>
+            <li>
+                <a href="#">メニューリンク3</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+
+
+
+      <div class="header-list">
+      </div>
+ </header>
+ <main>
+  <%= yield %>
+ </main>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<head>
+<div class-"header">
+ <h1>Cafelog</h1>
+</div>
+
+<body>
+  <div class="field">
+  <%= form_for @post do |f| %>
+
+    
+          <div class="content">
+            <%= f.label :カフェ名 %>
+            <%= f.text_field :name, :size => 30 %>
+          </div> 
+
+          <div class="content">
+            <%= f.label :最寄り駅 %>
+            <%= f.text_field :station, :size => 30 %>
+          </div>
+
+          <div class="content">
+            <%= f.label :充電  %>
+            <%= f.select :battery, 
+            [["できる", "できる"], 
+            ["できない", "できない"]], include_blank: "選択して下さい" %>
+          </div>
+
+          <div class="content">
+            <%= f.label :wifi  %>
+            <%= f.select :wifi, 
+            [["ある", "ある"], 
+            ["ない", "ない"]], include_blank: "選択して下さい" %>
+          </div>
+
+        <div class="content">
+          <%= f.label :人混み  %>
+          <%= f.select :people, 
+          [["多い", "多い"], 
+          ["少ない", "少ない"]], include_blank: "選択して下さい" %>
+        </div>
+
+        <div class="content">
+        <%= f.label :写真 %>
+        <%= f.file_field :image %>
+        </div>
+
+      <h5>総合評価</h5>
+      <div class="post_form">
+        <%= f.label :総合評価 %>
+        <%= f.radio_button :overall, 5 ,id: 'star1'%>
+        <label for="star1"><span class="text">最高</span>★</label>
+
+        <%= f.radio_button :overall, 4 ,id: 'star2'%>
+        <label for="star2"><span class="text">良い</span>★</label>
+
+        <%= f.radio_button :overall, 3 ,id: 'star3'%>
+        <label for="star3"><span class="text">普通</span>★</label>
+
+        <%= f.radio_button :overall, 2 ,id: 'star4'%>
+        <label for="star4"><span class="text">悪い</span>★</label>
+
+        <%= f.radio_button :overall, 1 ,id: 'star5'%>
+        <label for="star5"><span class="text">最悪</span>★</label>
+      </div>
+      <%= f.label :lat,"緯度" %>
+      <%= f.text_field :lat,:value =>"緯度", id: :lat %>
+      <%= f.label :lng,"経度" %>
+      <%= f.text_field :lng,:value =>"経度", id: :lng %>
+    
+    <%= f.submit "Postを投稿する" %>
+
+  
+  
+
+
+
+      <h2>Map</h2>
+
+      <input id="address" type="textbox" value="GeekSalon">
+      <input type="button" value="検索" onclick="codeAddress()">
+      <p>マーカーをドラック＆ドロップで位置の調整ができます。<p>
+      <div id='map'></div>
+
+      <style>
+      #map {
+        height: 600px;
+        width: 600px;
+      }
+      </style>
+
+      <script>
+      //初期マップの設定
+      let map
+      let marker
+      function initMap(){
+        geocoder = new google.maps.Geocoder()
+
+        map = new google.maps.Map(document.getElementById('map'), {
+          center:  {lat: 35.6803997, lng:139.7690174},  //東京
+          zoom: 15,
+          
+        });
+      }
+
+      //検索後のマップ作成
+      let geocoder
+      let aft
+      function codeAddress(){
+        let inputAddress = document.getElementById('address').value;
+        geocoder.geocode( { 'address': inputAddress}, function(results, status) {
+          if (status == 'OK') {
+              //マーカーが複数できないようにする
+              if (aft == true){
+                  marker.setMap(null);
+              }
+
+              //新しくマーカーを作成する
+              map.setCenter(results[0].geometry.location);
+                  marker = new google.maps.Marker({
+                  map: map,
+                  position: results[0].geometry.location,
+                  draggable: true	// ドラッグ可能にする
+              });
+
+              //二度目以降か判断
+              aft = true
+
+              //検索した時に緯度経度を入力する
+              document.getElementById('lat').value = results[0].geometry.location.lat();
+              document.getElementById('lng').value = results[0].geometry.location.lng();
+
+              // マーカーのドロップ（ドラッグ終了）時のイベント
+              google.maps.event.addListener( marker, 'dragend', function(ev){
+                  // イベントの引数evの、プロパティ.latLngが緯度経度
+                  document.getElementById('lat').value = ev.latLng.lat();
+                  document.getElementById('lng').value = ev.latLng.lng();
+              });
+          } else {
+            alert('該当する結果がありませんでした：' + status);
+          }
+        });   
+      }
+
+      </script>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkiAThdQubtvvS87phA1HwqDT-6YWe9Ek&callback=initMap" async defer></script>
+        
+      <%= link_to "Post一覧に戻る", posts_path %>
+
+  <% end %>
+</body>
